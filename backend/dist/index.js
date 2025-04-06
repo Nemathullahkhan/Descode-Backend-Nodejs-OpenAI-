@@ -17,6 +17,7 @@ const prompts_1 = require("./prompts");
 const node_1 = require("./defaults/node");
 const react_1 = require("./defaults/react");
 const nextjs_1 = require("./defaults/nextjs");
+const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 require("dotenv").config();
 const openai = new openai_1.default({
@@ -24,6 +25,10 @@ const openai = new openai_1.default({
 });
 ``;
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express_1.default.json());
 app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;

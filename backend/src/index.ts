@@ -3,6 +3,7 @@ import { DEFAULT_PROMPT, getSystemPrompt } from "./prompts";
 import { basePrompt as nodeBasePrompt } from "./defaults/node";
 import { basePrompt as reactBasePrompt } from "./defaults/react";
 import { basePrompt as nextBasePrompt } from "./defaults/nextjs";
+import cors from "cors";
 
 import express from "express";
 require("dotenv").config();
@@ -12,6 +13,10 @@ const openai = new OpenAI({
 });
 ``;
 const app = express();
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials: true
+}))
 app.use(express.json());
 
 app.post("/template", async (req, res) => {
