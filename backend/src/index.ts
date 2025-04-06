@@ -19,7 +19,7 @@ app.post("/template", async (req, res) => {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     temperature: 0,
-    max_tokens: 200,
+    max_tokens: 10,
     messages: [
       {
         role: "system",
@@ -31,24 +31,30 @@ app.post("/template", async (req, res) => {
   });
 
   const answer = response?.choices[0]?.message?.content?.trim()?.toLowerCase();
-  if (answer === "react") {
+  if (answer == "react") {
     res.json({
+      answer: answer,
       prompts: [
         DEFAULT_PROMPT,
         `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
       ],
       uiPrompts: [reactBasePrompt],
     });
-  } else if (answer === "node") {
+    return;
+  }
+
+  if (answer === "node") {
     res.json({
       answer: answer,
       prompts: [
-        `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${nodeBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
+        `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
       ],
       uiPrompts: [nodeBasePrompt],
     });
     return;
-  } else if (answer === "nextjs") {
+  }
+
+  if (answer === "nextjs") {
     res.json({
       answer: answer,
       prompts: [
@@ -59,10 +65,28 @@ app.post("/template", async (req, res) => {
     });
     return;
   }
-
   res.status(403).json({ message: "You can't access this!" });
   return;
 });
+
+app.post("/chat",async(req,res)=>{
+  const messages = req.body.messages;
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    max_tokens:8000,
+    messages: [{
+      role:"system",
+      content:getSystemPrompt()
+    },
+    ...messages
+  ]
+  });
+  const data = response?.choices[0]?.message?.content?.trim();
+  console.log(data);
+});
+
+
+
 // async function main() {
 //   const nextjsBasePrompt = basePrompt;
 //   const stream = await openai.chat.completions.create({

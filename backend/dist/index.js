@@ -31,7 +31,7 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const response = yield openai.chat.completions.create({
         model: "gpt-4o-mini",
         temperature: 0,
-        max_tokens: 200,
+        max_tokens: 10,
         messages: [
             {
                 role: "system",
@@ -41,26 +41,28 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         ],
     });
     const answer = (_d = (_c = (_b = (_a = response === null || response === void 0 ? void 0 : response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim()) === null || _d === void 0 ? void 0 : _d.toLowerCase();
-    if (answer === "react") {
+    if (answer == "react") {
         res.json({
+            answer: answer,
             prompts: [
                 prompts_1.DEFAULT_PROMPT,
                 `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${react_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
             ],
             uiPrompts: [react_1.basePrompt],
         });
+        return;
     }
-    else if (answer === "node") {
+    if (answer === "node") {
         res.json({
             answer: answer,
             prompts: [
-                `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${node_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
+                `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${react_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
             ],
             uiPrompts: [node_1.basePrompt],
         });
         return;
     }
-    else if (answer === "nextjs") {
+    if (answer === "nextjs") {
         res.json({
             answer: answer,
             prompts: [
@@ -73,6 +75,22 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     res.status(403).json({ message: "You can't access this!" });
     return;
+}));
+app.post("/chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    const messages = req.body.messages;
+    const response = yield openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        max_tokens: 8000,
+        messages: [{
+                role: "system",
+                content: (0, prompts_1.getSystemPrompt)()
+            },
+            ...messages
+        ]
+    });
+    const data = (_c = (_b = (_a = response === null || response === void 0 ? void 0 : response.choices[0]) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.content) === null || _c === void 0 ? void 0 : _c.trim();
+    console.log(data);
 }));
 // async function main() {
 //   const nextjsBasePrompt = basePrompt;
