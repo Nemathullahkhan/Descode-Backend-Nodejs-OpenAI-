@@ -1,0 +1,19 @@
+{
+  "name": "openaisdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -b && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "openai": "^4.91.1",
+    "typescript": "^5.8.3"
+  }
+}
