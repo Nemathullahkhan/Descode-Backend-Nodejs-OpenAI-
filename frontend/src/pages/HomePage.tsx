@@ -16,7 +16,8 @@ export default function HomePage() {
         const response = await axios.post(`${BACKEND_URL}/template`, {
             prompt: userPrompt.trim(),
         });
-        router("/builder", { state: { userPrompt } });
+        
+        router("/builder", { state: { userPrompt}  });
     } catch(error){
         console.log("API ERROR",error);
     }
@@ -35,7 +36,7 @@ export default function HomePage() {
             onChange={(e) => setUserPrompt(e.target.value)}
             className="!bg-transparent border-0 w-full focus-visible:ring-0 focus-visible:ring-offset-0 !text-md"
           />
-          <Button type="submit">
+          <Button type="submit" onClick= {()=> console.log("button clicked")}>
             {" "}
             <SendIcon />{" "}
           </Button>
